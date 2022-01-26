@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 	"regexp"
 
 	"github.com/gocolly/colly"
@@ -27,7 +28,13 @@ func main() {
 	r := mux.NewRouter()
 	r.HandleFunc("/rates", queryRates).Methods("GET")
 	http.Handle("/", r)
-	http.ListenAndServe(":8080", r)
+
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "9000" // Default port if not specified
+	}
+
+	http.ListenAndServe(port, r)
 }
 
 func queryRates(w http.ResponseWriter, r *http.Request) {
