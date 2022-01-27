@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"os"
 	"regexp"
@@ -26,6 +27,7 @@ func main() {
 	fmt.Println("Iniciando server")
 
 	r := mux.NewRouter()
+	r.HandleFunc("/", index)
 	r.HandleFunc("/rates", queryRates).Methods("GET")
 	http.Handle("/", r)
 
@@ -33,8 +35,12 @@ func main() {
 	if port == "" {
 		port = "9000" // Default port if not specified
 	}
+	// fmt.Println(port)
+	http.ListenAndServe(":"+port, r)
+}
 
-	http.ListenAndServe(port, r)
+func index(w http.ResponseWriter, r *http.Request) {
+	io.WriteString(w, "Welcome to Venetasa!")
 }
 
 func queryRates(w http.ResponseWriter, r *http.Request) {
